@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS products (
+ id BIGSERIAL PRIMARY KEY,
+ name TEXT NOT NULL,
+ category TEXT NOT NULL DEFAULT '',
+ sku TEXT NOT NULL DEFAULT '',
+ buy_price NUMERIC(14,2) NOT NULL DEFAULT 0 CHECK (buy_price >= 0),
+ sell_price NUMERIC(14,2) NOT NULL DEFAULT 0 CHECK (sell_price >= 0),
+ stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
+ min_stock INTEGER NOT NULL DEFAULT 5 CHECK (min_stock >= 0),
+ created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE TABLE IF NOT EXISTS stock_movements (
+ id BIGSERIAL PRIMARY KEY,
+ product_id BIGINT REFERENCES products(id) ON DELETE SET NULL,
+ product_name TEXT NOT NULL,
+ type TEXT NOT NULL CHECK (type IN ('in','out')),
+ quantity INTEGER NOT NULL CHECK (quantity > 0),
+ note TEXT NOT NULL DEFAULT '',
+ created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
