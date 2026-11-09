@@ -19,3 +19,12 @@ CREATE TABLE IF NOT EXISTS stock_movements (
  note TEXT NOT NULL DEFAULT '',
  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS app_users (
+ id BIGSERIAL PRIMARY KEY,
+ username TEXT NOT NULL UNIQUE,
+ password_hash TEXT NOT NULL,
+ salt TEXT NOT NULL,
+ role TEXT NOT NULL CHECK (role IN ('owner','admin')),
+ created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

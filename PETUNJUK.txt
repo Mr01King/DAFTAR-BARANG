@@ -1,31 +1,33 @@
 STOCK BARANG - VERCEL + NEON
 
-Aplikasi ini berupa PWA (bukan APK native). Deploy melalui Vercel, lalu buka URL yang sama di 3 HP Android dan pilih Tambahkan ke layar utama.
-
-PENTING: Vercel adalah hosting dan API. Data bersama disimpan di database PostgreSQL Neon yang bisa dibuat dari Vercel Marketplace. Jangan taruh password database di file frontend.
-
-LANGKAH SETUP
-1. Upload folder proyek ini ke GitHub sebagai repository baru.
-2. Login ke https://vercel.com/ lalu pilih Add New > Project dan impor repository tadi.
-3. Di Vercel Project > Storage / Marketplace Integrations, tambahkan database Neon (Postgres). Ikuti instruksi sampai DATABASE_URL tersedia sebagai Environment Variable.
-4. Di Vercel Project > Settings > Environment Variables, tambahkan:
-   STOCK_PIN = PIN rahasia yang hanya dibagikan ke petugas apotek.
-   Pastikan DATABASE_URL juga tersedia dari integrasi Neon.
-5. Buka Neon SQL Editor dari integrasi tersebut, lalu jalankan seluruh isi file database.sql.
-6. Setelah environment variable dan database siap, lakukan Redeploy di Vercel.
-7. Buka URL deployment Vercel. Masukkan STOCK_PIN.
-8. Buka URL yang sama di HP kedua dan ketiga, lalu masukkan PIN yang sama. Semua HP akan mengakses data inventaris yang sama.
+Aplikasi PWA inventaris apotek untuk dipakai bersama di 3 HP. Hosting di Vercel, database PostgreSQL Neon.
 
 FITUR
-- Tambah, edit, hapus produk.
-- Nama, kategori, kode, harga beli, harga jual, stok, batas stok menipis.
-- Daftar barang habis dan stok menipis otomatis.
-- Barang masuk/keluar dan riwayat transaksi.
-- Sinkronisasi otomatis setiap 15 detik dan saat memuat ulang.
+- Login dengan username dan password masing-masing.
+- Akun owner pertama dibuat otomatis saat login pertama.
+- Owner dapat menambahkan akun admin dari menu Kelola admin.
+- Admin dapat mengelola produk dan stok.
+- Daftar barang habis, stok menipis, riwayat masuk/keluar.
+- Sinkronisasi otomatis setiap 15 detik.
 
-KEAMANAN
-- Jangan bagikan STOCK_PIN kepada orang luar.
-- Jangan pernah memasukkan DATABASE_URL ke file HTML/JavaScript frontend atau mengunggahnya ke GitHub.
-- Semua petugas saat ini memakai PIN bersama. Belum ada akun dan hak akses per pegawai.
-- Untuk transaksi serentak dalam jumlah tinggi, endpoint stok perlu ditingkatkan menjadi transaksi SQL atomik.
-- Aplikasi ini untuk inventaris, bukan rekomendasi penggunaan obat. Pastikan pencatatan stok dicek dengan stok fisik.
+PERSIAPAN DEPLOY
+1. Upload isi folder stock_barang_app ke repository GitHub.
+2. Import repository ke Vercel.
+3. Hubungkan database Neon dan pastikan DATABASE_URL tersedia di Project > Settings > Environment Variables.
+4. Tambahkan environment variables berikut di Vercel (Production, Preview, Development):
+   OWNER_NAME = Zane
+   OWNER_PASSWORD = buat password baru yang kuat (minimal 10 karakter). Jangan gunakan password yang pernah dibagikan di chat.
+   AUTH_SECRET = string acak panjang minimal 32 karakter.
+   DATABASE_URL = otomatis dari integrasi Neon.
+5. Di Neon SQL Editor, jalankan seluruh isi database.sql.
+6. Redeploy project di Vercel.
+7. Buka URL aplikasi. Login pertama dengan username sesuai OWNER_NAME dan password OWNER_PASSWORD. Akun owner akan dibuat otomatis.
+8. Setelah masuk, buka Kelola admin > + Admin untuk membuat akun pegawai.
+9. Di HP kedua dan ketiga, buka URL yang sama dan login menggunakan akun masing-masing.
+
+CATATAN KEAMANAN
+- Password owner dan AUTH_SECRET hanya disimpan di Vercel Environment Variables, jangan di file frontend atau GitHub.
+- Owner bisa membuat akun admin. Admin tidak bisa membuat owner/admin lain.
+- Gunakan password berbeda untuk setiap admin dan jangan membagikan akun owner.
+- Bila mengubah OWNER_PASSWORD setelah akun owner pertama sudah dibuat, perubahan environment variable tidak otomatis mengubah password di database. Ubah password melalui prosedur reset database yang aman.
+- Ini aplikasi inventaris, bukan sistem rekomendasi penggunaan obat.
